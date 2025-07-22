@@ -1,0 +1,47 @@
+<!-- templates/leadership.html -->
+{% extends "base.html" %}
+
+{% block title %}Leadership Quotes{% endblock %}
+
+{% block content %}
+<section class="bg-white p-8 md:p-12 rounded-2xl shadow-xl max-w-4xl w-full">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8 text-center leading-tight">
+        Inspiring Leadership Quotes
+    </h1>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="py-3 px-6 text-left text-xs font-medium text-gray-600 uppercase tracking-wider rounded-tl-lg">
+                        Quote
+                    </th>
+                    <th class="py-3 px-6 text-left text-xs font-medium text-gray-600 uppercase tracking-wider rounded-tr-lg">
+                        Author
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for quote_item in quotes %}
+                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                    <td class="py-4 px-6 text-sm text-gray-800">"{{ quote_item.quote }}"</td>
+                    <td class="py-4 px-6 text-sm text-gray-600 font-medium whitespace-nowrap">{{ quote_item.author }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-8">
+        <a href="/quote/add" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            Add New Quote
+        </a>
+    </div>
+
+    <div class="text-center mt-8">
+        <a href="/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+            Back to Home
+        </a>
+    </div>
+</section>
+{% endblock %}

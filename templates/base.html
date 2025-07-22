@@ -1,0 +1,77 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Flask Website{% endblock %} - My Flask Website</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean look */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
+
+    <!-- Navigation Bar (Modularized) -->
+    <header class="bg-white shadow-md py-4">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold text-gray-800 rounded-lg p-2 hover:bg-gray-100 transition-colors">
+                My Website
+            </a>
+            <div class="flex space-x-4">
+                <a href="/" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                    Home
+                </a>
+                <a href="/about" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                    About
+                </a>
+                <a href="/contact" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                    Contact
+                </a>
+                <a href="/quote" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                    Leadership Quote
+                </a>
+                <a href="/add_quote" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                    Add Your Leadership Quote
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Flash Messages (Common to all pages) -->
+    <div class="container mx-auto px-4 mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6">
+                    {% for category, message in messages %}
+                        <div class="p-3 mb-2 rounded-lg text-white
+                            {% if category == 'success' %} bg-green-500
+                            {% elif category == 'error' %} bg-red-500
+                            {% else %} bg-gray-500
+                            {% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content Section (Page-specific content will go here) -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer (Modularized) -->
+    <footer class="bg-white shadow-inner py-4 mt-8">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            &copy; 2025 My Flask Website. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

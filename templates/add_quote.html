@@ -1,0 +1,36 @@
+<!-- templates/add_quote.html -->
+{% extends "base.html" %}
+
+{% block title %}Add New Quote{% endblock %}
+
+{% block content %}
+<section class="bg-white p-8 md:p-12 rounded-2xl shadow-xl max-w-xl w-full transform hover:scale-105 transition-transform duration-300">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8 text-center leading-tight">
+        Add a New Leadership Quote
+    </h1>
+
+    <form action="/add_quote" method="POST" class="space-y-6">
+        <div>
+            <label for="quote_text" class="block text-gray-700 text-sm font-bold mb-2">Quote Text:</label>
+            <textarea id="quote_text" name="quote_text" rows="5"
+                      class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      required>{{ quote_text if quote_text is defined else '' }}</textarea>
+        </div>
+        <div>
+            <label for="author_name" class="block text-gray-700 text-sm font-bold mb-2">Author:</label>
+            <input type="text" id="author_name" name="author_name" value="{{ author_name if author_name is defined else '' }}"
+                   class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                   required>
+        </div>
+        <div class="text-center flex justify-center space-x-4">
+            <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Add Quote
+            </button>
+            <a href="/leadership" class="inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+                Cancel
+            </a>
+        </div>
+    </form>
+</section>
+{% endblock %}
