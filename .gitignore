@@ -1,0 +1,11 @@
+# Poetry
+.poetry
+# If you're using virtualenvs inside your project folder:
+venv/
+.env
+# Python junk
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+.idea

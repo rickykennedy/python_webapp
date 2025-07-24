@@ -2,30 +2,48 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
-
+from config import Config  # Assuming you have a config.py file with your configuration settings
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+load_dotenv()
+import logging
+logging.basicConfig(level=logging.INFO)
+logging.info("Initial quotes added to the database")
 #initialize the Flask application
 app = Flask(__name__)
 
 # --- Flask Configuration for Secret Key and Mail ---
 # A secret key is required for flashing messages and session management.
 # In a real application, use a strong, randomly generated key stored securely.
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a_very_secret_key_for_dev')
-
-# Flask-Mail configuration from environment variables
-app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
-app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', '1', 't')
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME') # Default sender is usually the MAIL_USERNAME
+# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a_very_secret_key_for_dev')
+#
+# # Flask-Mail configuration from environment variables
+# app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+# app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+# app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
+# app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', '1', 't')
+# app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+# app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+# app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME') # Default sender is usually the MAIL_USERNAME
+app.config.from_object(Config)
 
 # Initialize Flask-Mail
 mail = Mail(app)
 
+print(app.config)
+# Format: postgresql+psycopg2://user:password@host:port/database
+# engine = create_engine("portostgresql+psycopg2://postgres:floricky@localhost:5432/postgres")
+# Base = declarative_base()
 # Flask-SQLAlchemy configuration
 # The database URI is fetched from the DATABASE_URL environment variable
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# app.config['SQLALCHEMY_DATABASE_URI'] = "jdbc:postgresql://postgres:floricky@localhost:5432/postgres"
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+#     'DATABASE_URL',
+#     'postgresql+psycopg2://postgres:floricky@localhost:5432/postgres'
+# )
 # Suppress SQLAlchemy's track modification warnings, as it consumes extra memory
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -115,11 +133,12 @@ def quote():
 @app.route('/quote/add', methods=['GET', 'POST'])
 def add_quote():
     """
-    Route to add a new quote.
-    """
+       Route to add a new quote.
+       Handles both GET (render form) and POST (process submission).
+   """
     if request.method == 'POST':
-        quote_text = request.form.get('quote')
-        author = request.form.get('author')
+        quote_text = request.form.get('quote_text').strip()
+        author = request.form.get('author_name').strip()
 
         # Basic validation
         if not quote_text or not author:
@@ -135,6 +154,7 @@ def add_quote():
             flash('Quote added successfully!', 'success')
             return redirect(url_for('quote')) # Redirect to the quotes page after adding
         except Exception as e:
+            app.logger.exception("Failed to add quote")
             # Rollback the session in case of error
             db.session.rollback()
             flash(f'Failed to add quote. Please try again later. Error: {e}', 'error')
