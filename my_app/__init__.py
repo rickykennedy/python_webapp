@@ -1,24 +1,27 @@
+import os
 import logging
 from flask import Flask
 from flask_mail import Mail
 from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
 
-# Import the configuration from config.py
+# Import the configuration from the root config.py
 from config import Config
-# Import the database object and models from models.py
-from my_app.models import db, User, Quote
 
 # --- Basic Logging Setup ---
 logging.basicConfig(level=logging.INFO)
 
-# --- Extensions Initialization (outside of factory) ---
-# These are created here but not configured until the app is created.
+# --- Extensions Initialization ---
+# Create extension instances without an app.
+# They will be initialized with the app in the factory.
+db = SQLAlchemy()
 mail = Mail()
 login_manager = LoginManager()
 # When a user needs to log in, they are redirected to the login view.
 # The 'main.' prefix refers to the blueprint's name.
 login_manager.login_view = 'main.login'
 login_manager.login_message_category = 'info'
+
 
 # --- Application Factory ---
 def create_app(config_class=Config):
@@ -27,7 +30,8 @@ def create_app(config_class=Config):
     This pattern is useful for creating multiple app instances for testing
     or different configurations.
     """
-    app = Flask(__name__)
+    app = Flask(__name__, instance_relative_config=True)
+
     # Load configuration from the Config object
     app.config.from_object(config_class)
 
@@ -37,21 +41,25 @@ def create_app(config_class=Config):
     mail.init_app(app)
     login_manager.init_app(app)
 
-    # --- Register Blueprints ---
-    # Import and register the blueprint from routes.py.
-    # The import is done here to avoid circular dependencies.
-    from my_app.routes import main_routes
-    app.register_blueprint(main_routes)
-
-    # --- Flask-Login User Loader ---
-    # This callback is used to reload the user object from the user ID stored in the session.
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
-
-    # --- Create Database Tables and Initial Data ---
-    # The app_context is needed for SQLAlchemy to know which app instance it's working with.
+    # The 'with app.app_context()' is crucial. It makes the application
+    # context available for the imports and database operations that follow.
+    # This resolves runtime errors if blueprints or models attempt to
+    # access the app or its extensions when they are imported.
     with app.app_context():
+        # Import blueprints and models inside the context to ensure
+        # they have access to the configured application.
+        from .routes import main_routes
+        from . import models
+
+        # Register the blueprint with the app
+        app.register_blueprint(main_routes)
+
+        # The user loader needs to be defined within the context
+        # to be correctly associated with the login_manager instance.
+        @login_manager.user_loader
+        def load_user(user_id):
+            return models.User.query.get(int(user_id))
+
         # Create database tables for all models
         db.create_all()
         # Populate the database with initial data if it's empty
@@ -61,6 +69,7 @@ def create_app(config_class=Config):
 
 def create_initial_data():
     """Creates initial data for the database if it's empty."""
+    from .models import Quote
     # Check if we have any quotes, if not, add them.
     if not Quote.query.first():
         initial_quotes = [
@@ -74,11 +83,3 @@ def create_initial_data():
             db.session.add(Quote(quote=item['quote'], author=item['author']))
         db.session.commit()
         logging.info("Initial quotes added to the database.")
-
-# --- Main Execution Block ---
-# This block runs only when the script is executed directly.
-if __name__ == '__main__':
-    # Create the Flask app instance using the factory
-    app = create_app()
-    # Run the development server
-    app.run(debug=True)

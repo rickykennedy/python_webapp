@@ -1,14 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy import or_
 
-# Note: We need to import db, mail, and the models from the main app context
-# This will be handled by the application factory pattern later, but for now,
-# we will assume they are available in the application context.
-# A better approach is to pass them to the blueprint or use current_app.
-from models import db, ContactMessage, Quote, User
+# Use relative imports to get the db/mail objects and models
+from . import db, mail
+from .models import ContactMessage, Quote, User
 from flask_mail import Message
-from app import mail # Import mail instance from app.py
 
 # Create a Blueprint
 main_routes = Blueprint('main', __name__)
@@ -35,9 +32,6 @@ def contact():
             return render_template('contact.html', title='Contact Us', name=name, email=email, subject=subject, message_body=message_body)
 
         try:
-            # Note: Accessing app.config directly in a blueprint can be tricky.
-            # It's better to use current_app from flask.
-            from flask import current_app
             msg = Message(
                 subject=f"Contact Form: {subject}",
                 sender=current_app.config['MAIL_DEFAULT_SENDER'],
@@ -48,8 +42,6 @@ def contact():
             flash('Your message has been sent successfully!', 'success')
             return redirect(url_for('main.contact'))
         except Exception as e:
-            # Use current_app.logger for logging within a blueprint
-            from flask import current_app
             current_app.logger.error(f"Failed to send email: {e}")
             flash(f'Failed to send message. Please try again later.', 'error')
             return render_template('contact.html', title='Contact Us', name=name, email=email, subject=subject, message_body=message_body)
@@ -144,7 +136,6 @@ def add_quote():
             flash('Quote added successfully!', 'success')
             return redirect(url_for('main.quote'))
         except Exception as e:
-            from flask import current_app
             current_app.logger.exception("Failed to add quote")
             db.session.rollback()
             flash(f'Failed to add quote. Error: {e}', 'error')

@@ -1,10 +1,12 @@
+# Import the db instance from the application package's __init__.py
+from . import db
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Initialize the database extension object.
 # This object doesn't have an application associated with it yet.
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 class ContactMessage(db.Model):
     """Model for storing contact messages."""
