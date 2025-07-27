@@ -3,8 +3,9 @@ from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy import or_
 
 # Use .. to go up one level to the package __init__ to get db
-from .. import db
-from ..models import User
+# Import the db instance from the new extensions.py file
+from ..extensions import db
+from ..models.user import User
 
 # Create a Blueprint for authentication routes
 auth = Blueprint('auth', __name__)

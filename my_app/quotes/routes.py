@@ -2,7 +2,10 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required
 
 # Use .. to go up one level to the package __init__ to get db
-from .. import db
+# Import the db instance from the new extensions.py file
+from ..extensions import db
+
+# Import the Quote model from the models package
 from ..models import Quote
 
 # Create a Blueprint for quote-related routes
@@ -10,6 +13,7 @@ quotes = Blueprint('quotes', __name__)
 
 @quotes.route('/quote')
 def quote_list():
+    """Displays the list of all quotes."""
     all_quotes = Quote.query.all()
     if not all_quotes:
         flash('No quotes available at the moment.', 'info')
@@ -18,6 +22,7 @@ def quote_list():
 @quotes.route('/quote/add', methods=['GET', 'POST'])
 @login_required
 def add_quote():
+    """Provides a form to add a new quote and handles the submission."""
     if request.method == 'POST':
         quote_text = request.form.get('quote_text', '').strip()
         author = request.form.get('author_name', '').strip()

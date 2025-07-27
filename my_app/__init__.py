@@ -1,22 +1,14 @@
 import os
 import logging
 from flask import Flask
-from flask_mail import Mail
-from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
 
 # Import the configuration from the root config.py
 from config import Config
-
+# Import extensions from the new extensions.py file
+from .extensions import db, mail, login_manager
 # --- Basic Logging Setup ---
 logging.basicConfig(level=logging.INFO)
 
-# --- Extensions Initialization ---
-# Create extension instances without an app.
-# They will be initialized with the app in the factory.
-db = SQLAlchemy()
-mail = Mail()
-login_manager = LoginManager()
 # When a user needs to log in, they are redirected to the login view.
 # The 'main.' prefix refers to the blueprint's name.
 login_manager.login_view = 'auth.login'
@@ -46,6 +38,10 @@ def create_app(config_class=Config):
     # This resolves runtime errors if blueprints or models attempt to
     # access the app or its extensions when they are imported.
     with app.app_context():
+
+        # Import models here to ensure they are registered with SQLAlchemy
+        from .models import User, ContactMessage, Quote
+
         # Import blueprints and models inside the context to ensure
         # they have access to the configured application.
         # Import and register the blueprints
@@ -58,14 +54,12 @@ def create_app(config_class=Config):
         from .quotes.routes import quotes as quotes_blueprint
         app.register_blueprint(quotes_blueprint)
 
-        # Import models here to ensure they are registered with SQLAlchemy
-        from . import models
 
         # The user loader needs to be defined within the context
         # to be correctly associated with the login_manager instance.
         @login_manager.user_loader
         def load_user(user_id):
-            return models.User.query.get(int(user_id))
+            return User.query.get(int(user_id))
 
         # Create database tables for all models
         db.create_all()
