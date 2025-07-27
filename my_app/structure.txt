@@ -1,0 +1,10 @@
+/python_webapp/
+├── my_app/
+│   ├── __init__.py      # <-- app.py's content goes here (the create_app factory)
+│   ├── routes.py
+│   ├── models.py
+│   ├── forms.py         # (Optional, for Flask-WTF forms)
+│   ├── static/
+│   └── templates/
+├── config.py
+└── run.py               # <-- A small script to run the app
