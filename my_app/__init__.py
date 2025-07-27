@@ -19,7 +19,7 @@ mail = Mail()
 login_manager = LoginManager()
 # When a user needs to log in, they are redirected to the login view.
 # The 'main.' prefix refers to the blueprint's name.
-login_manager.login_view = 'main.login'
+login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'info'
 
 
@@ -48,11 +48,18 @@ def create_app(config_class=Config):
     with app.app_context():
         # Import blueprints and models inside the context to ensure
         # they have access to the configured application.
-        from .routes import main_routes
-        from . import models
+        # Import and register the blueprints
+        from .main.routes import main as main_blueprint
+        app.register_blueprint(main_blueprint)
 
-        # Register the blueprint with the app
-        app.register_blueprint(main_routes)
+        from .auth.routes import auth as auth_blueprint
+        app.register_blueprint(auth_blueprint)
+
+        from .quotes.routes import quotes as quotes_blueprint
+        app.register_blueprint(quotes_blueprint)
+
+        # Import models here to ensure they are registered with SQLAlchemy
+        from . import models
 
         # The user loader needs to be defined within the context
         # to be correctly associated with the login_manager instance.

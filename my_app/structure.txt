@@ -8,3 +8,19 @@
 │   └── templates/
 ├── config.py
 └── run.py               # <-- A small script to run the app
+
+-------- new structure after multiple blueprints --------
+/python_webapp/
+├── my_app/
+│   ├── __init__.py        # <-- This will be updated
+│   ├── models.py
+│   ├── static/
+│   ├── templates/
+│   ├── main/
+│   │   └── routes.py      # <-- New file
+│   ├── auth/
+│   │   └── routes.py      # <-- New file
+│   └── quotes/
+│       └── routes.py      # <-- New file
+├── config.py
+└── run.py

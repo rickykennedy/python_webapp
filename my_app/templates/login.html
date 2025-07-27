@@ -5,7 +5,7 @@
 {% block content %}
 <section class="bg-white p-8 md:p-12 rounded-2xl shadow-xl max-w-2xl w-full text-center transform hover:scale-105 transition-transform duration-300">
     <h2 class="text-3xl font-bold text-center mb-6 text-blue-700">Log In to Your Account</h2>
-    <form method="POST" action="{{ url_for('main.login') }}">
+    <form method="POST" action="{{ url_for('auth.login') }}">
         <div class="mb-4">
             <label for="username" class="block text-gray-700 text-sm font-semibold mb-2">Username or Email:</label>
             <input type="text" id="username" name="username" required
@@ -22,7 +22,7 @@
         </button>
     </form>
     <p class="text-center text-gray-600 text-sm mt-4">
-        Don't have an account? <a href="{{ url_for('main.signup') }}" class="text-blue-600 hover:text-blue-800 font-semibold">Sign Up</a>
+        Don't have an account? <a href="{{ url_for('auth.signup') }}" class="text-blue-600 hover:text-blue-800 font-semibold">Sign Up</a>
     </p>
 </section>
 {% endblock %}
