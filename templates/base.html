@@ -16,62 +16,88 @@
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
 
-    <!-- Navigation Bar (Modularized) -->
-    <header class="bg-white shadow-md py-4">
-        <nav class="container mx-auto px-4 flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold text-gray-800 rounded-lg p-2 hover:bg-gray-100 transition-colors">
-                My Website
+<!-- Navigation Bar (Modularized) -->
+<header class="bg-white shadow-md py-4">
+    <nav class="container mx-auto px-4 flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold text-gray-800 rounded-lg p-2 hover:bg-gray-100 transition-colors">
+            Ricky Kennedy Sample Flask Website
+        </a>
+        <div class="flex space-x-4">
+            <a href="/"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                Home
             </a>
-            <div class="flex space-x-4">
-                <a href="/" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
-                    Home
-                </a>
-                <a href="/about" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
-                    About
-                </a>
-                <a href="/contact" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
-                    Contact
-                </a>
-                <a href="/quote" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
-                    Leadership Quote
-                </a>
-                <a href="/quote/add" class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
-                    Add Your Leadership Quote
-                </a>
-            </div>
-        </nav>
-    </header>
+            <a href="/about"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                About
+            </a>
+            <a href="/contact"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                Contact
+            </a>
+            <a href="/quote"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                Leadership Quote
+            </a>
+<!--            <a href="/quote/add"-->
+            <a href="{{ url_for('main.add_quote') }}"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                Add Your Leadership Quote
+            </a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.dashboard') }}"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">Dashboard</a>
+            <a href="{{ url_for('main.logout') }}"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">Logout</a>
+            {% else %}
+            <a href="{{ url_for('main.login') }}"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                Login
+            </a>
+            <a href="{{ url_for('main.signup') }}"
+               class="text-gray-600 hover:text-blue-600 font-medium py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors">
+                Sign Up
+            </a>
+<!--            <a href="{{ url_for('main.login') }}"-->
+<!--               class="bg-blue-500 mx-2 hover:underline rounded-md px-3 py-1 hover:bg-blue-700 transition duration-300">Login</a>-->
+<!--            <a href="{{ url_for('main.signup') }}"-->
+<!--               class="bg-green-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 transition duration-300">Sign-->
+<!--                Up</a>-->
+            {% endif %}
+        </div>
+    </nav>
+</header>
 
-    <!-- Flash Messages (Common to all pages) -->
-    <div class="container mx-auto px-4 mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="mb-6">
-                    {% for category, message in messages %}
-                        <div class="p-3 mb-2 rounded-lg text-white
+<!-- Flash Messages (Common to all pages) -->
+<div class="container mx-auto px-4 mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-6">
+        {% for category, message in messages %}
+        <div class="p-3 mb-2 rounded-lg text-white
                             {% if category == 'success' %} bg-green-500
                             {% elif category == 'error' %} bg-red-500
                             {% else %} bg-gray-500
                             {% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-    </div>
-
-    <!-- Main Content Section (Page-specific content will go here) -->
-    <main class="flex-grow flex items-center justify-center p-4">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer (Modularized) -->
-    <footer class="bg-white shadow-inner py-4 mt-8">
-        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
-            &copy; 2025 My Flask Website. All rights reserved.
+            {{ message }}
         </div>
-    </footer>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+</div>
+
+<!-- Main Content Section (Page-specific content will go here) -->
+<main class="flex-grow flex items-center justify-center p-4">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer (Modularized) -->
+<footer class="bg-white shadow-inner py-4 mt-8">
+    <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+        &copy; 2025 Ricky Kennedy. Generated Using Flask. All rights reserved.
+    </div>
+</footer>
 
 </body>
 </html>
