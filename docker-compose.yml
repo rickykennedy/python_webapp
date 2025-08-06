@@ -1,21 +1,25 @@
-version: '3.8'
+version: '3.9'
 
 services:
   web:
     build: .
+    container_name: python-webapp
     ports:
       - "5000:5000"
+    env_file:
+      - .env
     volumes:
       - .:/app
     depends_on:
       - db
-    environment:
-      - FLASK_APP=app.main
-      - FLASK_ENV=development
-      - DATABASE_URL=postgresql://postgres:floricky@db:5432/postgres
-
+#    environment:
+#      - FLASK_APP=app.main
+#      - FLASK_ENV=development
+#      - DATABASE_URL=postgresql://postgres:floricky@db:5432/postgres
+    command: poetry run python run.py
   db:
     image: postgres:16
+    container_name: postgres-db
     restart: always
     environment:
       POSTGRES_USER: postgres
