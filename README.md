@@ -4,6 +4,9 @@ This is a Python web application that uses Flask as the web framework. It includ
 quote management, and contact message functionality. The application is designed to be run in a Docker container
 and can be easily set up using Docker Compose.
 
+To access the venv
+```source venv/bin/activate```
+
 Using docker
 ```sudo systemctl status docker```
 ```sudo systemctl start docker```
@@ -27,6 +30,17 @@ build the docker image
 ```docker build -t python-webapp .```
 run the docker container
 ```docker run -p 5000:5000 --env-file .env python-webapp```
+```docker run -p 8000:8000 --name my-webapp-container my-webapp```
+```docker stop my-webapp-container```
+```docker rm my-webapp-container```
+```docker stop my-webapp-container && docker rm my-webapp-container```
+```docker run -d --name my-webapp-container your-image-name```
+Stop and Remove the container at one go
+```docker rm -f my-webapp-container```
+
+```docker ps -a```
+```docker logs my-webapp-container```
+```docker exec -it my-webapp-container /bin/bash```
 
 ## Running the application via docker-compose
 To run the application using Docker Compose, you can use the following command:
