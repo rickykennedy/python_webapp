@@ -30,7 +30,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     # Load configuration from the Config object
     app.config.from_object(config_class)
-
+    print("Database URI:", app.config['SQLALCHEMY_DATABASE_URI'])
     # --- Initialize Extensions with App ---
     # The extensions are now bound to the specific app instance.
     db.init_app(app)
