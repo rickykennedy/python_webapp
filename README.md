@@ -35,6 +35,24 @@ run the docker container
 ```docker rm my-webapp-container```
 ```docker stop my-webapp-container && docker rm my-webapp-container```
 ```docker run -d --name my-webapp-container your-image-name```
+
+# Connecting to local mysql database from inside the container
+## run the container with env file
+```docker run -p 5000:5000 --env-file .env --name my-webapp-container python-webapp```
+You can use --env-file in your docker run command:
+This will load all variables from .env into the container without committing the file.
+
+## Alternatively, you can use the following command to
+```docker run -d --name myapp -e DATABASE_URL=postgresql://user:password@host:5432/dbname -p 8000:8000 myimage:latest```
+This will set the DATABASE_URL environment variable inside the container.
+
+### To verify the environment variable is set correctly, you can exec into the running container and print the variable:
+```docker exec -it my-webapp-container /bin/bash```
+```echo $DATABASE_URL```
+#### Alternatively, you can use:
+```docker exec -it myapp env | grep DATABASE_URL```
+
+
 Stop and Remove the container at one go
 ```docker rm -f my-webapp-container```
 
